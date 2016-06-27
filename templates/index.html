@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head> 
+        <meta charset="utf-8" /> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1" /> 
+        <link rel="icon" href="{{ static_url('favicon.jpg') }}">
+        <title>ASTOST SEARCH, 搜遍ASTOST</title>
+        <!-- Bootstrap --> 
+        <link href="http://apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" /> 
+        <link rel="stylesheet" href="{{ static_url('css/front.css') }}" />
+
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries --> 
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// --> 
+        <!--[if lt IE 9]>
+            <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]--> 
+    </head> 
+    <body> 
+        <div id="bg"> 
+        </div> 
+        <div id="header"> 
+            <a href="https://www.astost.com/bbs" id="title">ASTOST</a> 
+            <a href="/login" class="account">登录</a>
+            <a href="/reg" class="account">注册</a>
+        </div> 
+        <div class="container"> 
+            <div class="row LOGO"> 
+                <div class="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1"> 
+                    <img id="LOGO" src="{{ static_url('logo.png') }}" />
+                </div> 
+            </div> 
+            <div class="row"> 
+                <div class="col-md-6 col-md-offset-3 col-xs-12">
+                    <form id="search" method="GET" action="/s">
+                        <input type="text" id="key" name="key" maxlength="40" /> 
+                        <button type="submit" id="sub-button">搜 索</button> 
+                    </form> 
+                </div> 
+            </div> 
+            <div id="footer" class="col-md-6 col-md-offset-3 col-xs-12 footer"> 
+                <h5>Copyright &copy; 2016 LITTLE::neko &nbsp;| <a href="mailto: littleneko@163.com">&nbsp;联系我们</a></h5> 
+            </div> 
+        </div>  
+        <script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?1ded412ff9364dafc20da600eb64a23e";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+})();
+        </script>  
+    </body>
+</html>

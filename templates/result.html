@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+ <head> 
+  <meta http-equiv="content-type" content="text/html;charset=utf-8" /> 
+  <meta name="theme-color" content="#2932e1" />
+  <link rel="icon" href="{{ static_url('favicon.jpg') }}">
+  <title>{{ result['key_word'] }}_ASTOST SEARCH</title>
+  <link rel="stylesheet" href="{{ static_url('css/result.css') }}" />
+
+ </head> 
+
+ <body link="#0000cc"> 
+
+  <div id="header"> 
+   <div class="header-brand"> 
+    <a href="http://www.astost.com/">search</a> 
+   </div> 
+   <div class="header-search"> 
+    <form id="form" method="GET" action="/s">
+     <input type="text" id="bbssearch" name="key" maxlength="40" value= "{{ result['key_word'] }}"/>
+     <button type="submit" id="search-button" class="search-button">搜 索</button> 
+    </form> 
+   </div> 
+  </div> 
+
+  <div id="wrapper" class="wrapper_s"> 
+   <div id="wrapper_wrapper"> 
+    <div id="container" class="container_s"> 
+
+     <div class="head_nums_cont_outer OP_LOG"> 
+      <div class="head_nums_cont_inner" style="top:-25px"> 
+       <div class="search_tool_conter"></div> 
+       <div class="nums">
+         ASTOST SEARCH为您找到相关结果约{{result['count']}}个, 共用时{{result['time']}}秒
+       </div> 
+      </div> 
+     </div> 
+
+     <div id="content_left">
+         {% if result_items is not None %}
+            {% for result_item in result_items %}
+                {% module Item(result_item) %}
+         {% else %}
+            没有找到任何结果
+         {% end %}
+
+     </div> 
+
+     <div style="clear:both;height:0;"></div> 
+
+    <div id="page"> 
+     <a href="/s?wd=rewrite" class="n">&lt;上一页</a>
+     <strong><span class="pc">1</span></strong> 
+     <a href="/s?wd=rewrite"><span class="pc">2</span></a> 
+     <a href="/s?wd=rewrite"><span class="pc">3</span></a> 
+     <a href="/s?wd=rewrite"><span class="pc">4</span></a> 
+     <a href="/s?wd=rewrite"><span class="pc">5</span></a> 
+     <a href="/s?wd=rewrite"><span class="pc">6</span></a> 
+     <a href="/s?wd=rewrite&amp;pn=60"><span class="pc">7</span></a> 
+     <a href="/s?wd=rewrite&amp;pn=70"><span class="pc">8</span></a> 
+     <a href="/s?wd=rewrite&amp;pn=80"><span class="pc">9</span></a> 
+     <a href="/s?wd=rewrite&amp;pn=90"><span class="pc">10</span></a> 
+     <a href="/s?wd=rewrite&amp;pn=10" class="n">下一页&gt;</a> 
+    </div> 
+
+   </div> 
+  </div>  
+ </div>
+ </body>
+</html>

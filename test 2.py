@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+
 #
 # $Id$
 #
@@ -23,19 +24,19 @@ if not sys.argv[1:]:
     print "-g, --groupby <EXPR>\tgroup matches by 'EXPR'"
     print "-gs,--groupsort <EXPR>\tsort groups by 'EXPR'"
     print "-l, --limit <COUNT>\tretrieve COUNT matches (default is 20)"
-    #sys.exit(0)
+    sys.exit(0)
 
 q = ''
-mode = SPH_MATCH_EXTENDED
-host = '10.108.102.28'
+mode = SPH_MATCH_ALL
+host = 'localhost'
 port = 9312
 index = '*'
-filtercol = 'fid'
-filtervals = '新作资源'
+filtercol = 'group_id'
+filtervals = []
 sortby = ''
 groupby = ''
 groupsort = '@group desc'
-limit = 20
+limit = 0
 
 i = 1
 while (i<len(sys.argv)):
@@ -80,18 +81,16 @@ while (i<len(sys.argv)):
 # do query
 cl = SphinxClient()
 cl.SetServer ( host, port )
-cl.SetFieldWeights({'title': 10})
 cl.SetMatchMode ( mode )
 if filtervals:
-    cl.SetFilterString ( filtercol, filtervals )
-    cl.SetFilterString('user', 'かがみ✿')
+    cl.SetFilter ( filtercol, filtervals )
 if groupby:
     cl.SetGroupBy ( groupby, SPH_GROUPBY_ATTR, groupsort )
 if sortby:
     cl.SetSortMode ( SPH_SORT_EXTENDED, sortby )
 if limit:
-    cl.SetLimits ( 0, limit, max(limit, 1000) )
-res = cl.Query ( '"甲鉄城のカバネリ｣オープニング・テーマ"/0.75', index )
+    cl.SetLimits ( 0, limit, max(limit,1000) )
+res = cl.Query ( q, index )
 
 if not res:
     print 'query failed: %s' % cl.GetLastError()
