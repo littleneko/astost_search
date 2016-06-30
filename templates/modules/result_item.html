@@ -1,12 +1,12 @@
 <div class="result c-container " tpl="se_com_default">
   <h3 class="t">
-    <a href="https://www.astost.com/bbs/read.php?tid={{result_item['tid']}}" target="_blank">{{result_item['title']}}</a></h3>
+    <a href="https://www.astost.com/bbs/read.php?tid={{result_item['tid']}}" target="_blank">{% raw result_item['title'] %}</a></h3>
   <div class="c-abstract">
-    <span class=" newTimeFactor_before_abs m">result_item['time']&nbsp;-&nbsp;</span>{{result_item['abstract']}}...</div>
+    <span class=" newTimeFactor_before_abs m">{{result_item['time']}}&nbsp;-&nbsp;</span>{% raw result_item['abstract'] %}</div>
   <div class="f13">
-    <a target="_blank" href="http://www.baidu.com" class="c-showurl" style="text-decoration:none;">news.163.com/16/0518/0...&nbsp;</a>
-    <a data-click="{'rsv_snapshot':'1'}" href="https://www.astost.com/bbs/thread.php?fid={{result_item['fid_num']}}" target="_blank" class="m">{{result_item['fid_str']}}</a>
+    <a target="_blank" href="https://www.astost.com/bbs/read.php?tid={{result_item['tid']}}" class="c-showurl" style="text-decoration:none;">bbs/read.php?tid={{result_item['tid']}}&nbsp;</a>
+    <a data-click="{'rsv_snapshot':'1'}" href="https://www.astost.com/bbs/thread.php?fid={{result_item['fid_num']}}" target="_blank" class="m">{% raw result_item['fid_str']%}</a>
     <span>&nbsp;-&nbsp;
-      <a href="https://www.astost.com/bbs/profile.php?action=show&uid={{result_item['uid']}}" target="_blank" class="m" data-click="{'rsv_comments':'1'}">{{result_item['user']}}</a></span>
+      <a href="https://www.astost.com/bbs/profile.php?action=show&uid={{result_item['uid']}}" target="_blank" class="m" data-click="{'rsv_comments':'1'}">{% raw result_item['user']%}</a></span>
   </div>
 </div>

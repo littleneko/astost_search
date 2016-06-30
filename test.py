@@ -84,14 +84,13 @@ cl.SetFieldWeights({'title': 10})
 cl.SetMatchMode ( mode )
 if filtervals:
     cl.SetFilterString ( filtercol, filtervals )
-    cl.SetFilterString('user', 'かがみ✿')
 if groupby:
     cl.SetGroupBy ( groupby, SPH_GROUPBY_ATTR, groupsort )
 if sortby:
     cl.SetSortMode ( SPH_SORT_EXTENDED, sortby )
 if limit:
     cl.SetLimits ( 0, limit, max(limit, 1000) )
-res = cl.Query ( '"甲鉄城のカバネリ｣オープニング・テーマ"/0.75', index )
+res = cl.Query ( '"LiSA"/0.75', index )
 
 if not res:
     print 'query failed: %s' % cl.GetLastError()

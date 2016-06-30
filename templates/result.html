@@ -14,7 +14,7 @@
 
   <div id="header"> 
    <div class="header-brand"> 
-    <a href="http://www.astost.com/">search</a> 
+    <a href="/"><img src="{{ static_url('logo_s.png') }}" width="100" align="center"/></a>
    </div> 
    <div class="header-search"> 
     <form id="form" method="GET" action="/s">
@@ -41,28 +41,92 @@
          {% if result_items is not None %}
             {% for result_item in result_items %}
                 {% module Item(result_item) %}
+            {% end %}
          {% else %}
-            没有找到任何结果
+            啊咧,没有找到与<em>"{{result['key_word']}}"</em>相关的任何结果呢! <br>试一试换个关键字?<br>
+く__,.ヘヽ.　　　　/　,ー､ 〉<br>
+　　　　　＼ ', !-─‐-i　/　/´<br>
+　　　 　 ／｀ｰ'　　　 L/／｀ヽ､<br>
+　　 　 /　 ／,　 /|　 ,　 ,　　　 ',<br>
+　　　ｲ 　/ /-‐/　ｉ　L_ ﾊ ヽ!　 i<br>
+　　　 ﾚ ﾍ 7ｲ｀ﾄ　 ﾚ'ｧ-ﾄ､!ハ|　 |<br>
+　　　　 !,/7 'gili'　　 ´giliソ| 　 |<br>
+　　　　 |.从"　　_　　 ,,,, / |./ 　 |<br>
+　　　　 ﾚ'| i＞.､,,__　_,.イ / 　.i 　|<br>
+　　　　　 ﾚ'| | / k_７_/ﾚ'ヽ,　ﾊ.　|<br>
+　　　　　　 | |/i 〈|/　 i　,.ﾍ |　i　|<br>
+　　　　　　.|/ /　ｉ： 　 ﾍ!　　＼　|<br>
+　　　 　 　 kヽ>､ﾊ 　 _,.ﾍ､ 　 /､!<br>
+　　　　　　 !'〈//｀Ｔ´', ＼ ｀'7'ｰr'<br>
+　　　　　　 ﾚ'ヽL__|___i,___,ンﾚ|ノ<br>
+　　　　　 　　　ﾄ-,/　|___./<br>
+　　　　　 　　　'ｰ'　　!_,.:<br>
          {% end %}
 
      </div> 
 
-     <div style="clear:both;height:0;"></div> 
+     <div style="clear:both;height:0;"></div>
 
-    <div id="page"> 
-     <a href="/s?wd=rewrite" class="n">&lt;上一页</a>
-     <strong><span class="pc">1</span></strong> 
-     <a href="/s?wd=rewrite"><span class="pc">2</span></a> 
-     <a href="/s?wd=rewrite"><span class="pc">3</span></a> 
-     <a href="/s?wd=rewrite"><span class="pc">4</span></a> 
-     <a href="/s?wd=rewrite"><span class="pc">5</span></a> 
-     <a href="/s?wd=rewrite"><span class="pc">6</span></a> 
-     <a href="/s?wd=rewrite&amp;pn=60"><span class="pc">7</span></a> 
-     <a href="/s?wd=rewrite&amp;pn=70"><span class="pc">8</span></a> 
-     <a href="/s?wd=rewrite&amp;pn=80"><span class="pc">9</span></a> 
-     <a href="/s?wd=rewrite&amp;pn=90"><span class="pc">10</span></a> 
-     <a href="/s?wd=rewrite&amp;pn=10" class="n">下一页&gt;</a> 
-    </div> 
+
+     {% if result['count']+1 > 10 %}
+        <div id="page">
+          {% if result['count']//10+1 < 10 %}
+
+            {% if result['pn'] > 1 %}
+                 <a href="/s?key={{ result['key_word'] }}&pn={{ result['pn']-1 }}" class="n">&lt;上一页</a>
+            {% end %}
+
+            {% for i in xrange(1, result['count']//10 + 2) %}
+                {% if result['pn'] == i %}
+                    <strong><span class="pc">{{i}}</span></strong>
+                {% else %}
+                    <a href="/s?key={{ result['key_word'] }}&pn={{i}}"><span class="pc">{{i}}</span></a>
+                {% end %}
+            {% end%}
+
+            {% if result['pn'] < result['count']//10+1 %}
+                <a href="/s?key={{ result['key_word'] }}&pn={{result['pn']+1 }}" class="n">下一页&gt;</a>
+            {% end %}
+
+          {% else %}
+
+            {% if result['pn'] > 1 %}
+                <a href="/s?key={{ result['key_word'] }}&pn={{ result['pn']-1 }}" class="n">&lt;上一页</a>
+            {% end %}
+
+            {% if result['pn'] <= 5 %}
+                {% for i in xrange(1, 11) %}
+                    {% if result['pn'] == i %}
+                        <strong><span class="pc">{{result['pn']}}</span></strong>
+                    {% else %}
+                        <a href="/s?key={{ result['key_word'] }}&pn={{i}}"><span class="pc">{{i}}</span></a>
+                    {% end %}
+                {% end%}
+            {% elif result['pn'] <= result['count']//10 - 3 %}
+                {% for i in xrange(1, 11) %}
+                    {% if i == 6 %}
+                        <strong><span class="pc">{{result['pn']}}</span></strong>
+                    {% else %}
+                        <a href="/s?key={{ result['key_word'] }}&pn={{i + result['pn'] - 6}}"><span class="pc">{{i + result['pn'] - 6}}</span></a>
+                    {% end %}
+                {% end%}
+            {% else %}
+                {% for i in xrange(1, 11) %}
+                    {% if result['pn']%10 + 6 == i %}
+                        <strong><span class="pc">{{result['pn']}}</span></strong>
+                    {% else %}
+                        <a href="/s?key={{ result['key_word'] }}&pn={{i + result['count']%10 - 4 }}"><span class="pc">{{i + result['count']%10 - 4 }}</span></a>
+                    {% end %}
+                {% end%}
+            {% end %}
+
+            {% if result['pn'] < result['count']//10+1 %}
+                <a href="/s?key={{ result['key_word'] }}&pn={{result['pn']+1 }}" class="n">下一页&gt;</a>
+            {% end %}
+
+          {% end %}
+        </div>
+     {% end %}
 
    </div> 
   </div>  

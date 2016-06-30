@@ -13,7 +13,7 @@ COMPOSITE_MUSIC = 0x10
 RADIO = 0x20
 HI_RES = 0x40
 EX = 0x80
-ALL_MUSIC = 0xff
+ALL_MUSIC = 0x00
 
 
 class AstostSphinxClient(object):
@@ -32,6 +32,7 @@ class AstostSphinxClient(object):
     def __cus_init(self):
         self.__cl.SetServer(AstostSphinxClient.host, AstostSphinxClient.port)
         self.__cl.SetMatchMode(AstostSphinxClient.mode)
+        self.__cl.SetSortMode(SPH_SORT_EXTENDED, '@weight DESC, post_time DESC')
         # self.__cl.SetGroupBy(groupby, SPH_GROUPBY_ATTR, groupsort)
 
     def set_filter_fid(self, fid):
@@ -54,8 +55,11 @@ class AstostSphinxClient(object):
 
     def search(self, key, start):
         self.__cl.SetLimits(start, AstostSphinxClient.limit, max(AstostSphinxClient.limit, 1000))
-        res = self.__cl.Query(key + '/0.75', AstostSphinxClient.index)
+        res = self.__cl.Query('"' + key + '"/0.75', AstostSphinxClient.index)
         return res
+
+    def build_excerpts(self, docs, index, words, opts=None):
+        return self.__cl.BuildExcerpts(docs, index, words, opts)
 
 
 

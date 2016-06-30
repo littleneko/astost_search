@@ -33,16 +33,16 @@ p,form,ol,ul,li,dl,dt,dd,h3 {
     float: left;
     font-size: 20px;
     color: #777;
-    line-height: 50px;
-    margin: 0 20px 0 17px;
+    line-height: 45px;
+    margin: 0 0px 0 10px;
 }
 
 .header-search{
     font-size: 14px;
     float: left;
     overflow: hidden;
-    height: 34px;
-    margin: 8px 0 8px 25px;
+    height: 45px;
+    margin: 8px 0 8px 13px;
 }
 
 #bbssearch{
