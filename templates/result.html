@@ -43,25 +43,28 @@
                 {% module Item(result_item) %}
             {% end %}
          {% else %}
-            啊咧,没有找到与<em>"{{result['key_word']}}"</em>相关的任何结果呢! <br>试一试换个关键字?<br>
+            啊咧,没有找到与<em>"{{result['key_word']}}"</em>相关的任何结果呢!
          <br>
-く__,.ヘヽ.　　　　/　,ー､ 〉<br>
-　　　　　＼ ', !-─‐-i　/　/´<br>
-　　　 　 ／｀ｰ'　　　 L/／｀ヽ､<br>
-　　 　 /　 ／,　 /|　 ,　 ,　　　 ',<br>
-　　　ｲ 　/ /-‐/　ｉ　L_ ﾊ ヽ!　 i<br>
-　　　 ﾚ ﾍ 7ｲ｀ﾄ　 ﾚ'ｧ-ﾄ､!ハ|　 |<br>
-　　　　 !,/7 'gili'　　 ´giliソ| 　 |<br>
-　　　　 |.从"　　_　　 ,,,, / |./ 　 |<br>
-　　　　 ﾚ'| i＞.､,,__　_,.イ / 　.i 　|<br>
-　　　　　 ﾚ'| | / k_７_/ﾚ'ヽ,　ﾊ.　|<br>
-　　　　　　 | |/i 〈|/　 i　,.ﾍ |　i　|<br>
-　　　　　　.|/ /　ｉ： 　 ﾍ!　　＼　|<br>
-　　　 　 　 kヽ>､ﾊ 　 _,.ﾍ､ 　 /､!<br>
-　　　　　　 !'〈//｀Ｔ´', ＼ ｀'7'ｰr'<br>
-　　　　　　 ﾚ'ヽL__|___i,___,ンﾚ|ノ<br>
-　　　　　 　　　ﾄ-,/　|___./<br>
-　　　　　 　　　'ｰ'　　!_,.:<br>
+         试一试换个关键字?
+         <br>
+         <br>
+            く__,.ヘヽ.　　　　/　,ー､ 〉<br>
+            　　　　　＼ ', !-─‐-i　/　/´<br>
+            　　　 　 ／｀ｰ'　　　 L/／｀ヽ､<br>
+            　　 　 /　 ／,　 /|　 ,　 ,　　　 ',<br>
+            　　　ｲ 　/ /-‐/　ｉ　L_ ﾊ ヽ!　 i<br>
+            　　　 ﾚ ﾍ 7ｲ｀ﾄ　 ﾚ'ｧ-ﾄ､!ハ|　 |<br>
+            　　　　 !,/7 'gili'　　 ´giliソ| 　 |<br>
+            　　　　 |.从"　　_　　 ,,,, / |./ 　 |<br>
+            　　　　 ﾚ'| i＞.､,,__　_,.イ / 　.i 　|<br>
+            　　　　　 ﾚ'| | / k_７_/ﾚ'ヽ,　ﾊ.　|<br>
+            　　　　　　 | |/i 〈|/　 i　,.ﾍ |　i　|<br>
+            　　　　　　.|/ /　ｉ： 　 ﾍ!　　＼　|<br>
+            　　　 　 　 kヽ>､ﾊ 　 _,.ﾍ､ 　 /､!<br>
+            　　　　　　 !'〈//｀Ｔ´', ＼ ｀'7'ｰr'<br>
+            　　　　　　 ﾚ'ヽL__|___i,___,ンﾚ|ノ<br>
+            　　　　　 　　　ﾄ-,/　|___./<br>
+            　　　　　 　　　'ｰ'　　!_,.:<br>
          {% end %}
 
      </div> 
@@ -69,9 +72,9 @@
      <div style="clear:both;height:0;"></div>
 
 
-     {% if result['count']+1 > 10 %}
+     {% if result['count'] > 10 %}
         <div id="page">
-          {% if result['count']//10+1 < 10 %}
+          {% if result['count']//10+1 <= 10 %}
 
             {% if result['pn'] > 1 %}
                  <a href="/s?key={{ result['key_word'] }}&pn={{ result['pn']-1 }}" class="n">&lt;上一页</a>
@@ -113,10 +116,10 @@
                 {% end%}
             {% else %}
                 {% for i in xrange(1, 11) %}
-                    {% if result['pn']%10 + 6 == i %}
+                    {% if 9 - result['count']//10 + result['pn'] == i %}
                         <strong><span class="pc">{{result['pn']}}</span></strong>
                     {% else %}
-                        <a href="/s?key={{ result['key_word'] }}&pn={{i + result['count']%10 - 4 }}"><span class="pc">{{i + result['count']%10 - 4 }}</span></a>
+                        <a href="/s?key={{ result['key_word'] }}&pn={{i + result['count']//10 - 9 }}"><span class="pc">{{i + result['count']//10 - 9 }}</span></a>
                     {% end %}
                 {% end%}
             {% end %}
