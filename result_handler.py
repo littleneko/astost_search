@@ -8,9 +8,10 @@ import tornado_mysql
 from sphinx_client import *
 
 
-sql_cmd = 'select ' \
+sql_cmd = 'SELECT ' \
           'post.tid, post.title, post.fid, post.uid, post.user, post.post_time, post_content.content ' \
-          'from post LEFT JOIN post_content on post.tid = post_content.tid WHERE post.tid in (%s)'
+          'FROM post LEFT JOIN post_content ON post.tid = post_content.tid WHERE post.tid IN (%s)' \
+          'ORDER BY FIND_IN_SET(post.tid, "%s")'
 
 
 fid = {'新作资源': '50', '游戏音乐': '4', '动画音乐': '5', '同人音乐': '42',
@@ -63,12 +64,12 @@ class ResultHandler(tornado.web.RequestHandler):
             result_items = []
 
             if len(tids) > 0:
-                tid_sql_str = ', '.join(tids)
+                tid_sql_str = ','.join(tids)
                 conn = yield tornado_mysql.connect(host=ResultHandler.sql_host, port=ResultHandler.sql_port,
                                                    user=ResultHandler.sql_user, passwd=ResultHandler.sql_pwd,
                                                    db=ResultHandler.db, charset='utf8')
                 cur = conn.cursor()
-                yield cur.execute(sql_cmd % (tid_sql_str))
+                yield cur.execute(sql_cmd % (tid_sql_str, tid_sql_str))
 
                 for row in cur:
                     row = [row_item.encode('utf-8') if isinstance(row_item, unicode) else row_item for row_item in row]

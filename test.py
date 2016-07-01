@@ -30,8 +30,8 @@ mode = SPH_MATCH_EXTENDED
 host = '10.108.102.28'
 port = 9312
 index = '*'
-filtercol = 'fid'
-filtervals = '新作资源'
+filtercol = ''
+filtervals = ''
 sortby = ''
 groupby = ''
 groupsort = '@group desc'
@@ -80,7 +80,7 @@ while (i<len(sys.argv)):
 # do query
 cl = SphinxClient()
 cl.SetServer ( host, port )
-cl.SetFieldWeights({'title': 10})
+#cl.SetFieldWeights({'title': 10})
 cl.SetMatchMode ( mode )
 if filtervals:
     cl.SetFilterString ( filtercol, filtervals )
@@ -90,7 +90,7 @@ if sortby:
     cl.SetSortMode ( SPH_SORT_EXTENDED, sortby )
 if limit:
     cl.SetLimits ( 0, limit, max(limit, 1000) )
-res = cl.Query ( '"LiSA"/0.75', index )
+res = cl.Query ( '"' + q + '"/0.75', index )
 
 if not res:
     print 'query failed: %s' % cl.GetLastError()
