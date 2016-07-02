@@ -42,7 +42,7 @@ class ResultHandler(tornado.web.RequestHandler):
         pn = self._check_argument_pn(self.get_argument('pn', 1))
 
         if len(key_word) < 2:
-            self.write('搜索关键字必须大于两个字符!!!')
+            self.write('关键字长度必须大于两个字符!!!')
             return
 
         # sphinx client
