@@ -41,11 +41,14 @@ class ResultHandler(tornado.web.RequestHandler):
         key_word = self.get_argument('key', '').encode('utf-8')
         pn = self._check_argument_pn(self.get_argument('pn', 1))
 
-        self._check_argument_key(key_word)
+        if len(key_word) < 2:
+            self.write('搜索关键字必须大于两个字符!!!')
+            return
 
         # sphinx client
         cl = AstostSphinxClient()
         cl.set_filter_fid(ALL_MUSIC)
+        cl.open_ex(False)
         res = cl.search(key_word, (pn-1)*10)
 
         if not res:
@@ -97,9 +100,5 @@ class ResultHandler(tornado.web.RequestHandler):
         pn_p = pn_p if pn_p <= 100 else 100
         return pn_p
 
-    def _check_argument_key(self, key):
-        if len(key) < 2:
-            self.write('搜索关键字必须大于两个字符!!!')
-            return
 
 

@@ -53,6 +53,10 @@ class AstostSphinxClient(object):
             self.__cl.SetFilterString('fid', 'Hi-Res自购资源交流')
             self.__cl.SetFilterString('fid', 'Hi-Res&Hi-Fi讨论')
 
+    def open_ex(self, ex):
+        if ex is False:
+            self.__cl.SetFilterString('fid', 'EX咖喱版', True)
+
     def search(self, key, start):
         self.__cl.SetLimits(start, AstostSphinxClient.limit, max(AstostSphinxClient.limit, 1000))
         res = self.__cl.Query('"' + key + '"/0.75', AstostSphinxClient.index)
