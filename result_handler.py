@@ -40,6 +40,7 @@ class ResultHandler(tornado.web.RequestHandler):
     def get(self):
         key_word = self.get_argument('key', '').encode('utf-8')
         pn = self._check_argument_pn(self.get_argument('pn', 1))
+        ex = self.get_argument('ex', '')
 
         if len(key_word) < 2:
             self.write('关键字长度必须大于两个字符!!!')
@@ -48,7 +49,8 @@ class ResultHandler(tornado.web.RequestHandler):
         # sphinx client
         cl = AstostSphinxClient()
         cl.set_filter_fid(ALL_MUSIC)
-        cl.open_ex(False)
+        if ex != 'on':
+            cl.open_ex(False)
         res = cl.search(key_word, (pn-1)*10)
 
         if not res:
