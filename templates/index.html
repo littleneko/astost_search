@@ -4,11 +4,17 @@
         <meta charset="utf-8" /> 
         <meta http-equiv="X-UA-Compatible" content="IE=edge" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1" /> 
-        <link rel="icon" href="{{ static_url('favicon.jpg') }}">
+        <link rel="icon" href="{{ static_url('img/favicon.jpg') }}">
         <title>ASTOST SEARCH, 搜遍ASTOST</title>
         <!-- Bootstrap --> 
         <link href="http://apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" /> 
         <link rel="stylesheet" href="{{ static_url('css/front.css') }}" />
+
+        <link href='http://fonts.useso.com/css?family=Raleway:400,300,700' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="{{ static_url('css/normalize.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ static_url('css/demo.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ static_url('css/cs-select.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ static_url('css/cs-skin-elastic.css') }}" />
 
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries --> 
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// --> 
@@ -39,12 +45,25 @@
         <div class="container"> 
             <div class="row LOGO"> 
                 <div class="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1"> 
-                    <img id="LOGO" src="{{ static_url('logo.png') }}" />
+                    <img id="LOGO" src="{{ static_url('img/logo.png') }}" />
                 </div> 
             </div> 
             <div class="row"> 
                 <div class="col-md-6 col-md-offset-3 col-xs-12">
                     <form id="search" method="GET" action="/s">
+                        <div>
+                            <select class="cs-select cs-skin-elastic" name="fid">
+                                <option value="all">全部</option>
+                                <option value="new">新作</option>
+                                <option value="anime">动画</option>
+                                <option value="game">游戏</option>
+                                <option value="doujin">同人</option>
+                                <option value="comp">综合</option>
+                                <option value="radio">广播剧</option>
+                                <option value="hi1">Hi-Res讨论</option>
+                                <option value="hi2">Hi-Res交流</option>
+                            </select>
+                        </div>
                         <input type="text" id="key" name="key" maxlength="40" /> 
                         <button type="submit" id="sub-button">搜 索</button> 
                     </form> 
@@ -54,5 +73,15 @@
                 <h5>Copyright &copy; 2016 LITTLE::neko &nbsp;| <a href="mailto: littleneko@163.com">&nbsp;联系我们</a></h5> 
             </div> 
         </div>
+
+        <script src="{{ static_url('js/classie.js') }}"></script>
+        <script src="{{ static_url('js/selectFx.js') }}"></script>
+        <script>
+            (function() {
+                [].slice.call( document.querySelectorAll( 'select.cs-select' ) ).forEach( function(el) {
+                    new SelectFx(el);
+                } );
+            })();
+        </script>
     </body>
 </html>

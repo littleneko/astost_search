@@ -3,7 +3,6 @@
 
 
 from sphinxapi import *
-import sys, time
 
 NEW_PRODUCTION = 0x01
 GAME_MUSIC = 0x02
@@ -11,8 +10,9 @@ ANIME_MUSIC = 0x04
 DOUJIN_MUSIC = 0x08
 COMPOSITE_MUSIC = 0x10
 RADIO = 0x20
-HI_RES = 0x40
-EX = 0x80
+HI_RES_1 = 0x40
+HI_RES_2 = 0x80
+EX = 0x100
 ALL_MUSIC = 0x00
 
 
@@ -49,12 +49,16 @@ class AstostSphinxClient(object):
             self.__cl.SetFilterString('fid', '综合音乐')
         if fid & RADIO:
             self.__cl.SetFilterString('fid', '广播剧')
-        if fid & HI_RES:
-            self.__cl.SetFilterString('fid', 'Hi-Res自购资源交流')
+        if fid & HI_RES_1:
             self.__cl.SetFilterString('fid', 'Hi-Res&Hi-Fi讨论')
+        if fid & HI_RES_2:
+            self.__cl.SetFilterString('fid', 'Hi-Res自购资源交流')
+        if fid & EX:
+            self.__cl.SetFilterString('fid', 'EX咖喱版')
 
     def open_ex(self, ex):
         if ex is False:
+            # 排除EX版
             self.__cl.SetFilterString('fid', 'EX咖喱版', True)
 
     def search(self, key, start):

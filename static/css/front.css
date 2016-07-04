@@ -8,7 +8,7 @@ body,h1{
 #bg{
 	position: absolute;
 	z-index: -1;
-	background: url('/static/bg.jpg') no-repeat fixed;
+	background: url('/static/img/bg.jpg') no-repeat fixed;
 	background-size: cover;
 	height: 100%;
 	width: 100%;
@@ -56,7 +56,7 @@ body,h1{
   line-height: 28px;
   display: block;
   float: left;
-  width: 80%;
+  width: 60%;
   padding: 10px;
   /*border: none;
   outline: none;*/

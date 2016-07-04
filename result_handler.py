@@ -14,9 +14,13 @@ sql_cmd = 'SELECT ' \
           'ORDER BY FIND_IN_SET(post.tid, "%s")'
 
 
-fid = {'新作资源': '50', '游戏音乐': '4', '动画音乐': '5', '同人音乐': '42',
-       '综合音乐': '8', '广播剧': '25', 'Hi-Res自购资源交流': '52', 'Hi-Res&Hi-Fi讨论': '53',
-       'EX咖喱版': '49'}
+fid_str_nu = {'新作资源': '50', '游戏音乐': '4', '动画音乐': '5', '同人音乐': '42',
+              '综合音乐': '8', '广播剧': '25', 'Hi-Res自购资源交流': '52', 'Hi-Res&Hi-Fi讨论': '53',
+              'EX咖喱版': '49'}
+
+fid_param_to_str = {'new': NEW_PRODUCTION, 'game': GAME_MUSIC, 'anime': ANIME_MUSIC, 'doujin': DOUJIN_MUSIC,
+                    'comp': COMPOSITE_MUSIC, 'radio': RADIO, 'hi1': HI_RES_1, 'hi2': HI_RES_2,
+                    'ex': EX}
 
 excerpt_opts = {'before_match': '<em>', 'after_match': '</em>', 'limit_words': 300}
 
@@ -41,6 +45,7 @@ class ResultHandler(tornado.web.RequestHandler):
         key_word = self.get_argument('key', '').encode('utf-8')
         pn = self._check_argument_pn(self.get_argument('pn', 1))
         ex = self.get_argument('ex', '')
+        fid = self.__check_fid(self.get_argument('fid', 'all').encode('utf-8'))
 
         if len(key_word) < 2:
             self.write('关键字长度必须大于两个字符!!!')
@@ -51,6 +56,8 @@ class ResultHandler(tornado.web.RequestHandler):
         cl.set_filter_fid(ALL_MUSIC)
         if ex != 'on':
             cl.open_ex(False)
+        if fid != 'all':
+            cl.set_filter_fid(fid_param_to_str.get(fid, 0x00))
         res = cl.search(key_word, (pn-1)*10)
 
         if not res:
@@ -58,7 +65,7 @@ class ResultHandler(tornado.web.RequestHandler):
             return
 
         # result need
-        result = {'key_word': key_word, 'pn': pn, 'count': res['total_found'], 'time': res['time']}
+        result = {'key_word': key_word, 'pn': pn, 'fid': fid, 'count': res['total_found'], 'time': res['time']}
 
         result_items = None
 
@@ -83,7 +90,7 @@ class ResultHandler(tornado.web.RequestHandler):
                     row_excerpts = cl.build_excerpts(row_excerpts, 'astost', key_word, excerpt_opts)
                     result_item = {'tid': row[0], 'title': row_excerpts[0] + '_' + row[2],
                                    'time': row[5], 'abstract': row_excerpts[1],
-                                   'fid_str': row[2], 'fid_num': fid.get(row[2], ''),
+                                   'fid_str': row[2], 'fid_num': fid_str_nu.get(row[2], ''),
                                    'uid': row[3], 'user': row[4]}
                     result_items.append(result_item)
                 cur.close()
@@ -101,6 +108,12 @@ class ResultHandler(tornado.web.RequestHandler):
         pn_p = pn_p if pn_p > 0 else 1
         pn_p = pn_p if pn_p <= 100 else 100
         return pn_p
+
+    @staticmethod
+    def __check_fid(fid):
+        if fid not in fid_param_to_str.keys():
+            return 'all'
+        return fid
 
 
 
