@@ -7,6 +7,8 @@ import tornado_mysql
 
 from sphinx_client import *
 
+from setting import *
+
 
 sql_cmd = 'SELECT ' \
           'post.tid, post.title, post.fid, post.uid, post.user, post.post_time, post_content.content ' \
@@ -30,12 +32,6 @@ class ResultHandler(tornado.web.RequestHandler):
     """
     处理搜索请求,查询sphinx
     """
-
-    sql_host = '10.108.102.28'
-    sql_port = 3306
-    sql_user = 'root'
-    sql_pwd = '794613'
-    db = 'astost'
 
     def initialize(self):
         self.__re_html = re.compile(r'<[^>]+>', re.S)
@@ -77,9 +73,9 @@ class ResultHandler(tornado.web.RequestHandler):
 
             if len(tids) > 0:
                 tid_sql_str = ','.join(tids)
-                conn = yield tornado_mysql.connect(host=ResultHandler.sql_host, port=ResultHandler.sql_port,
-                                                   user=ResultHandler.sql_user, passwd=ResultHandler.sql_pwd,
-                                                   db=ResultHandler.db, charset='utf8')
+                conn = yield tornado_mysql.connect(host=SQL_HOST, port=SQL_PORT,
+                                                   user=SQL_USER, passwd=SQL_PWD,
+                                                   db=DB, charset='utf8')
                 cur = conn.cursor()
                 yield cur.execute(sql_cmd % (tid_sql_str, tid_sql_str))
 

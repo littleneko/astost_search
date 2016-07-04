@@ -4,6 +4,8 @@
 
 from sphinxapi import *
 
+from setting import *
+
 NEW_PRODUCTION = 0x01
 GAME_MUSIC = 0x02
 ANIME_MUSIC = 0x04
@@ -19,8 +21,6 @@ ALL_MUSIC = 0x00
 class AstostSphinxClient(object):
 
     # for sphinx
-    host = '10.108.102.28'
-    port = 9312
     mode = SPH_MATCH_EXTENDED
     limit = 10
     index = '*'
@@ -30,7 +30,7 @@ class AstostSphinxClient(object):
         self.__cus_init()
 
     def __cus_init(self):
-        self.__cl.SetServer(AstostSphinxClient.host, AstostSphinxClient.port)
+        self.__cl.SetServer(SPHINX_HOST, SPHINX_PORT)
         self.__cl.SetMatchMode(AstostSphinxClient.mode)
         self.__cl.SetSortMode(SPH_SORT_EXTENDED, '@weight DESC, post_time DESC')
         # self.__cl.SetGroupBy(groupby, SPH_GROUPBY_ATTR, groupsort)
