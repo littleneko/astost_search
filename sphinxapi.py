@@ -36,6 +36,11 @@ import socket
 import re
 from struct import *
 
+# 修改查询操作为异步
+from tornado import ioloop
+from tornado import gen
+from tornado.concurrent import Future
+
 
 # known searchd commands
 SEARCHD_COMMAND_SEARCH		= 0
@@ -577,6 +582,7 @@ class SphinxClient:
         self._outerlimit = 0
         self._hasouter = False
 
+    @gen.coroutine
     def Query (self, query, index='*', comment=''):
         """
         Connect to searchd server and run given search query.
@@ -584,17 +590,16 @@ class SphinxClient:
         """
         assert(len(self._reqs)==0)
         self.AddQuery(query,index,comment)
-        results = self.RunQueries()
-        self._reqs = [] # we won't re-run erroneous batch
+        results = yield self.RunQueries()
+        self._reqs = []  # we won't re-run erroneous batch
 
-        if not results or len(results)==0:
-            return None
+        if not results or len(results) == 0:
+            raise gen.Return(None)
         self._error = results[0]['error']
         self._warning = results[0]['warning']
         if results[0]['status'] == SEARCHD_ERROR:
-            return None
-        return results[0]
-
+            raise gen.Return(None)
+        raise gen.Return(results[0])
 
     def AddQuery (self, query, index='*', comment=''):
         """
@@ -736,149 +741,162 @@ class SphinxClient:
         req = pack('>HHLLL', SEARCHD_COMMAND_SEARCH, VER_COMMAND_SEARCH, length, 0, len(self._reqs))+req
         self._Send ( sock, req )
 
-        response = self._GetResponse(sock, VER_COMMAND_SEARCH)
-        if not response:
-            return None
+        # add by littleneko
 
-        nreqs = len(self._reqs)
+        future = Future()
 
-        # parse response
-        max_ = len(response)
-        p = 0
+        def handle_data(s, event):
 
-        results = []
-        for i in range(0,nreqs,1):
-            result = {}
-            results.append(result)
+            io_loop = ioloop.IOLoop.current()
+            io_loop.remove_handler(s)
 
-            result['error'] = ''
-            result['warning'] = ''
-            status = unpack('>L', response[p:p+4])[0]
-            p += 4
-            result['status'] = status
-            if status != SEARCHD_OK:
-                length = unpack('>L', response[p:p+4])[0]
+            response = self._GetResponse(s, VER_COMMAND_SEARCH)
+            if not response:
+                return None
+
+            nreqs = len(self._reqs)
+
+            # parse response
+            max_ = len(response)
+            p = 0
+
+            results = []
+            for i in range(0,nreqs,1):
+                result = {}
+                results.append(result)
+
+                result['error'] = ''
+                result['warning'] = ''
+                status = unpack('>L', response[p:p+4])[0]
                 p += 4
-                message = response[p:p+length]
-                p += length
+                result['status'] = status
+                if status != SEARCHD_OK:
+                    length = unpack('>L', response[p:p+4])[0]
+                    p += 4
+                    message = response[p:p+length]
+                    p += length
 
-                if status == SEARCHD_WARNING:
-                    result['warning'] = message
-                else:
-                    result['error'] = message
-                    continue
+                    if status == SEARCHD_WARNING:
+                        result['warning'] = message
+                    else:
+                        result['error'] = message
+                        continue
 
-            # read schema
-            fields = []
-            attrs = []
+                # read schema
+                fields = []
+                attrs = []
 
-            nfields = unpack('>L', response[p:p+4])[0]
-            p += 4
-            while nfields>0 and p<max_:
-                nfields -= 1
-                length = unpack('>L', response[p:p+4])[0]
+                nfields = unpack('>L', response[p:p+4])[0]
                 p += 4
-                fields.append(response[p:p+length])
-                p += length
+                while nfields>0 and p<max_:
+                    nfields -= 1
+                    length = unpack('>L', response[p:p+4])[0]
+                    p += 4
+                    fields.append(response[p:p+length])
+                    p += length
 
-            result['fields'] = fields
+                result['fields'] = fields
 
-            nattrs = unpack('>L', response[p:p+4])[0]
-            p += 4
-            while nattrs>0 and p<max_:
-                nattrs -= 1
-                length = unpack('>L', response[p:p+4])[0]
+                nattrs = unpack('>L', response[p:p+4])[0]
                 p += 4
-                attr = response[p:p+length]
-                p += length
-                type_ = unpack('>L', response[p:p+4])[0]
+                while nattrs>0 and p<max_:
+                    nattrs -= 1
+                    length = unpack('>L', response[p:p+4])[0]
+                    p += 4
+                    attr = response[p:p+length]
+                    p += length
+                    type_ = unpack('>L', response[p:p+4])[0]
+                    p += 4
+                    attrs.append([attr,type_])
+
+                result['attrs'] = attrs
+
+                # read match count
+                count = unpack('>L', response[p:p+4])[0]
                 p += 4
-                attrs.append([attr,type_])
+                id64 = unpack('>L', response[p:p+4])[0]
+                p += 4
 
-            result['attrs'] = attrs
+                # read matches
+                result['matches'] = []
+                while count>0 and p<max_:
+                    count -= 1
+                    if id64:
+                        doc, weight = unpack('>QL', response[p:p+12])
+                        p += 12
+                    else:
+                        doc, weight = unpack('>2L', response[p:p+8])
+                        p += 8
 
-            # read match count
-            count = unpack('>L', response[p:p+4])[0]
-            p += 4
-            id64 = unpack('>L', response[p:p+4])[0]
-            p += 4
+                    match = { 'id':doc, 'weight':weight, 'attrs':{} }
+                    for i in range(len(attrs)):
+                        if attrs[i][1] == SPH_ATTR_FLOAT:
+                            match['attrs'][attrs[i][0]] = unpack('>f', response[p:p+4])[0]
+                        elif attrs[i][1] == SPH_ATTR_BIGINT:
+                            match['attrs'][attrs[i][0]] = unpack('>q', response[p:p+8])[0]
+                            p += 4
+                        elif attrs[i][1] == SPH_ATTR_STRING:
+                            slen = unpack('>L', response[p:p+4])[0]
+                            p += 4
+                            match['attrs'][attrs[i][0]] = ''
+                            if slen>0:
+                                match['attrs'][attrs[i][0]] = response[p:p+slen]
+                            p += slen-4
+                        elif attrs[i][1] == SPH_ATTR_FACTORS:
+                            slen = unpack('>L', response[p:p+4])[0]
+                            p += 4
+                            match['attrs'][attrs[i][0]] = ''
+                            if slen>0:
+                                match['attrs'][attrs[i][0]] = response[p:p+slen-4]
+                                p += slen-4
+                            p -= 4
+                        elif attrs[i][1] == SPH_ATTR_MULTI:
+                            match['attrs'][attrs[i][0]] = []
+                            nvals = unpack('>L', response[p:p+4])[0]
+                            p += 4
+                            for n in range(0,nvals,1):
+                                match['attrs'][attrs[i][0]].append(unpack('>L', response[p:p+4])[0])
+                                p += 4
+                            p -= 4
+                        elif attrs[i][1] == SPH_ATTR_MULTI64:
+                            match['attrs'][attrs[i][0]] = []
+                            nvals = unpack('>L', response[p:p+4])[0]
+                            nvals = nvals/2
+                            p += 4
+                            for n in range(0,nvals,1):
+                                match['attrs'][attrs[i][0]].append(unpack('>q', response[p:p+8])[0])
+                                p += 8
+                            p -= 4
+                        else:
+                            match['attrs'][attrs[i][0]] = unpack('>L', response[p:p+4])[0]
+                        p += 4
 
-            # read matches
-            result['matches'] = []
-            while count>0 and p<max_:
-                count -= 1
-                if id64:
-                    doc, weight = unpack('>QL', response[p:p+12])
-                    p += 12
-                else:
-                    doc, weight = unpack('>2L', response[p:p+8])
+                    result['matches'].append ( match )
+
+                result['total'], result['total_found'], result['time'], words = unpack('>4L', response[p:p+16])
+
+                result['time'] = '%.3f' % (result['time']/1000.0)
+                p += 16
+
+                result['words'] = []
+                while words>0:
+                    words -= 1
+                    length = unpack('>L', response[p:p+4])[0]
+                    p += 4
+                    word = response[p:p+length]
+                    p += length
+                    docs, hits = unpack('>2L', response[p:p+8])
                     p += 8
 
-                match = { 'id':doc, 'weight':weight, 'attrs':{} }
-                for i in range(len(attrs)):
-                    if attrs[i][1] == SPH_ATTR_FLOAT:
-                        match['attrs'][attrs[i][0]] = unpack('>f', response[p:p+4])[0]
-                    elif attrs[i][1] == SPH_ATTR_BIGINT:
-                        match['attrs'][attrs[i][0]] = unpack('>q', response[p:p+8])[0]
-                        p += 4
-                    elif attrs[i][1] == SPH_ATTR_STRING:
-                        slen = unpack('>L', response[p:p+4])[0]
-                        p += 4
-                        match['attrs'][attrs[i][0]] = ''
-                        if slen>0:
-                            match['attrs'][attrs[i][0]] = response[p:p+slen]
-                        p += slen-4
-                    elif attrs[i][1] == SPH_ATTR_FACTORS:
-                        slen = unpack('>L', response[p:p+4])[0]
-                        p += 4
-                        match['attrs'][attrs[i][0]] = ''
-                        if slen>0:
-                            match['attrs'][attrs[i][0]] = response[p:p+slen-4]
-                            p += slen-4
-                        p -= 4
-                    elif attrs[i][1] == SPH_ATTR_MULTI:
-                        match['attrs'][attrs[i][0]] = []
-                        nvals = unpack('>L', response[p:p+4])[0]
-                        p += 4
-                        for n in range(0,nvals,1):
-                            match['attrs'][attrs[i][0]].append(unpack('>L', response[p:p+4])[0])
-                            p += 4
-                        p -= 4
-                    elif attrs[i][1] == SPH_ATTR_MULTI64:
-                        match['attrs'][attrs[i][0]] = []
-                        nvals = unpack('>L', response[p:p+4])[0]
-                        nvals = nvals/2
-                        p += 4
-                        for n in range(0,nvals,1):
-                            match['attrs'][attrs[i][0]].append(unpack('>q', response[p:p+8])[0])
-                            p += 8
-                        p -= 4
-                    else:
-                        match['attrs'][attrs[i][0]] = unpack('>L', response[p:p+4])[0]
-                    p += 4
+                    result['words'].append({'word':word, 'docs':docs, 'hits':hits})
 
-                result['matches'].append ( match )
+            self._reqs = []
+            future.set_result(result)
 
-            result['total'], result['total_found'], result['time'], words = unpack('>4L', response[p:p+16])
+        io_loop = ioloop.IOLoop.current()
+        io_loop.add_handler(sock, handle_data, io_loop.READ)
 
-            result['time'] = '%.3f' % (result['time']/1000.0)
-            p += 16
-
-            result['words'] = []
-            while words>0:
-                words -= 1
-                length = unpack('>L', response[p:p+4])[0]
-                p += 4
-                word = response[p:p+length]
-                p += length
-                docs, hits = unpack('>2L', response[p:p+8])
-                p += 8
-
-                result['words'].append({'word':word, 'docs':docs, 'hits':hits})
-
-        self._reqs = []
-        return results
-
+        return future
 
     def BuildExcerpts (self, docs, index, words, opts=None):
         """

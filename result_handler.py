@@ -54,7 +54,7 @@ class ResultHandler(tornado.web.RequestHandler):
             cl.open_ex(False)
         if fid != 'all':
             cl.set_filter_fid(fid_param_to_str.get(fid, 0x00))
-        res = cl.search(key_word, (pn-1)*10)
+        res = yield cl.search(key_word, (pn-1)*10)
 
         if not res:
             self.write('Something maybe wrong, Please wait some seconds!')

@@ -6,6 +6,11 @@ from sphinxapi import *
 
 from setting import *
 
+# 修改查询操作为异步
+from tornado import ioloop
+from tornado import gen
+from tornado.concurrent import Future
+
 NEW_PRODUCTION = 0x01
 GAME_MUSIC = 0x02
 ANIME_MUSIC = 0x04
@@ -61,10 +66,11 @@ class AstostSphinxClient(object):
             # 排除EX版
             self.__cl.SetFilterString('fid', 'EX咖喱版', True)
 
+    @gen.coroutine
     def search(self, key, start):
         self.__cl.SetLimits(start, AstostSphinxClient.limit, max(AstostSphinxClient.limit, 1000))
-        res = self.__cl.Query('"' + key + '"/0.75', AstostSphinxClient.index)
-        return res
+        res = yield self.__cl.Query('"' + key + '"/0.75', AstostSphinxClient.index)
+        raise gen.Return(res)
 
     def build_excerpts(self, docs, index, words, opts=None):
         return self.__cl.BuildExcerpts(docs, index, words, opts)
