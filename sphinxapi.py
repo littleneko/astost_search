@@ -891,7 +891,7 @@ class SphinxClient:
                     result['words'].append({'word':word, 'docs':docs, 'hits':hits})
 
             self._reqs = []
-            future.set_result(result)
+            future.set_result(results)
 
         io_loop = ioloop.IOLoop.current()
         io_loop.add_handler(sock, handle_data, io_loop.READ)
