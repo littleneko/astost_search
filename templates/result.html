@@ -19,15 +19,15 @@
    <div class="header-search"> 
     <form id="form" method="GET" action="/s">
         <select class="search-select" name="fid">
-            <option value="all" {% if result['fid'] == 'all' %} selected="selected" {% end %}>全部</option>
-            <option value="new" {% if result['fid'] == 'new' %} selected="selected" {% end %}>新作</option>
-            <option value="anime" {% if result['fid'] == 'anime' %} selected="selected" {% end %}>动画</option>
-            <option value="game" {% if result['fid'] == 'game' %} selected="selected" {% end %}>游戏</option>
-            <option value="doujin" {% if result['fid'] == 'doujin' %} selected="selected" {% end %}>同人</option>
-            <option value="comp" {% if result['fid'] == 'comp' %} selected="selected" {% end %}>综合</option>
+            <option value="all" {% if result['fid'] == 'all' %} selected="selected" {% end %}>全部分区</option>
+            <option value="new" {% if result['fid'] == 'new' %} selected="selected" {% end %}>新作资源</option>
+            <option value="anime" {% if result['fid'] == 'anime' %} selected="selected" {% end %}>动画音乐</option>
+            <option value="game" {% if result['fid'] == 'game' %} selected="selected" {% end %}>游戏音乐</option>
+            <option value="doujin" {% if result['fid'] == 'doujin' %} selected="selected" {% end %}>同人音乐</option>
+            <option value="comp" {% if result['fid'] == 'comp' %} selected="selected" {% end %}>综合音乐</option>
             <option value="radio" {% if result['fid'] == 'radio' %} selected="selected" {% end %}>广播剧</option>
             <option value="hi1" {% if result['fid'] == 'hi1' %} selected="selected" {% end %}>Hi-Res讨论</option>
-            <option value="hi2" {% if result['fid'] == 'hi2' %} selected="selected" {% end %}>Hi-Res交流</option>
+            <option value="hi2" {% if result['fid'] == 'hi2' %} selected="selected" {% end %}>Hi-Res资源</option>
         </select>
         <input type="text" id="bbssearch" name="key" maxlength="40" value= "{{ result['key_word'] }}"/>
         <button type="submit" id="search-button" class="search-button">搜 索</button>
