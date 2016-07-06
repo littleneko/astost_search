@@ -112,6 +112,6 @@ div.cs-select:focus {
 
 @media (min-width: 768px){
 	.cs-select span {
-		padding: 1em 1em 1em 0.3em;
+		padding: 1em 1em 1em 0.5em;
 	}
 }
