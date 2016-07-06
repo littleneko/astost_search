@@ -58,13 +58,13 @@ body,h1{
   float: left;
   width: 60%;
   padding: 10px;
-  /*border: none;
-  outline: none;*/
+  border: none;
+  outline: none;
 }
 
 #sub-button{
 	font-size: 20px;
-	/*line-height: 48px;*/
+	line-height: 48px;
 	display: block;
 	float: left;
 	width: 20%;
@@ -79,7 +79,7 @@ body,h1{
 
 #select_box{
 	font-size: 20px;
-	/*line-height: 48px;*/
+	line-height: 48px;
 	display: block;
 	float: left;
 	width: 20%;
@@ -110,7 +110,7 @@ body,h1{
 
 	#key{
 		line-height: 20px;
-		padding: 5px;
+		padding: 7px;
 	}
 
 	#sub-button{
@@ -126,7 +126,7 @@ body,h1{
 	}
 	#key{
 		line-height: 34px;
-		padding: 5px;
+		padding: 7px;
 	}
 
 	#sub-button{
