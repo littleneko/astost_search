@@ -104,40 +104,40 @@ body,h1{
 }
 
 @media (min-width: 300px){
-.LOGO{
-	margin-top: 40%;
-}
+	.LOGO{
+		margin-top: 40%;
+	}
 
-#key{
-	line-height: 20px;
-	padding: 7px;
-}
+	#key{
+		line-height: 20px;
+		padding: 5px;
+	}
 
-#sub-button{
-	height: 34px;
-	font-size: 15px;
-	line-height: 34px;
-}
+	#sub-button{
+		height: 34px;
+		font-size: 15px;
+		line-height: 34px;
+	}
 }
 
 @media (min-width: 768px){
-.LOGO{
-	margin-top: 40%;
-}
-#key{
-	line-height: 34px;
-	padding: 5px;
-}
+	.LOGO{
+		margin-top: 40%;
+	}
+	#key{
+		line-height: 34px;
+		padding: 5px;
+	}
 
-#sub-button{
-	height: 48px;
-	font-size: 20px;
-	line-height: 48px;
-}
+	#sub-button{
+		height: 48px;
+		font-size: 20px;
+		line-height: 48px;
+	}
 }
 
 @media (min-width: 992px){
-.LOGO{
-	margin-top: 22%;
-}
+	.LOGO{
+		margin-top: 22%;
+	}
 }
