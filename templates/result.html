@@ -29,7 +29,7 @@
             <option value="hi1" {% if result['fid'] == 'hi1' %} selected="selected" {% end %}>Hi-Res讨论</option>
             <option value="hi2" {% if result['fid'] == 'hi2' %} selected="selected" {% end %}>Hi-Res资源</option>
         </select>
-        <input type="text" id="bbssearch" name="key" maxlength="40" value= "{{ result['key_word'] }}"/>
+        <input type="text" id="bbssearch" name="key" maxlength="100" value= "{{ result['key_word'] }}"/>
         <button type="submit" id="search-button" class="search-button">搜 索</button>
     </form> 
    </div> 
